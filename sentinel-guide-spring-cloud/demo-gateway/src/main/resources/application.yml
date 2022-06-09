@@ -1,0 +1,31 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: demo-gateway
+  cloud:
+    sentinel:
+      transport:
+        port: 9719
+#        dashboard: www.henry-lau.com:8333
+        dashboard: localhost:8333
+      filter:
+        url-patterns: /**
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          lower-case-service-id: true
+      routes:
+        # Add your routes here.
+        - id: foo-service-route
+          uri: http://localhost:9669/
+          predicates:
+            - Path=/demo/**
+        - id: httpbin-route
+          uri: https://httpbin.org
+          predicates:
+            - Path=/httpbin/**
+          filters:
+            - RewritePath=/httpbin/(?<segment>.*), /$\{segment}
